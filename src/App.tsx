@@ -1,9 +1,12 @@
-function App() {
+import React from 'react';
+import { ChakraProvider } from '@chakra-ui/react';
+import Navbar from './components/Navbar';
+import theme from './config/chakra';
+
+export default function App() {
   return (
-    <div>
-      Hello qcksurvey
-    </div>
+    <ChakraProvider theme={theme}>
+      <Navbar />
+    </ChakraProvider>
   )
 }
-
-export default App
