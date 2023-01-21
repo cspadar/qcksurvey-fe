@@ -3,7 +3,7 @@ import { KEY_JWT } from './constants';
 
 export const getToken = () => localStorage.getItem(KEY_JWT) || null;
 
-const BASE_URL = 'http://localhost:8080/';
+const BASE_URL = import.meta.env.VITE_BACKEND_SERVICE_URL;
 const TIMEOUT_MS = 1000 * 60;
 
 const HEADERS = {

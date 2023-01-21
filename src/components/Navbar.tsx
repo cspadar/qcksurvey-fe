@@ -64,8 +64,6 @@ const Navbar = () => {
                             <Avatar size={'sm'} />
                         </MenuButton>
                         <MenuList>
-                            <MenuItem>My Profile</MenuItem>
-                            <MenuDivider />
                             <MenuItem onClick={onLogout}>Logout</MenuItem>
                         </MenuList>
                     </Menu> : null}
