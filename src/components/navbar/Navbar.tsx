@@ -12,14 +12,14 @@ import {
     MenuItem,
     Avatar,
     MenuList,
-    MenuDivider,
     Text
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
-import NavLink from './navbar/NavLink';
-import Hamburger from './navbar/Hamburger';
+import NavLink from './NavLink';
+import Hamburger from './Hamburger';
 import { useContext } from 'react';
-import { IUserContext, UserContext } from '../context/UserContext';
+import { IUserContext, UserContext } from '../../context/UserContext';
+import { Link as RouterLink } from 'react-router-dom';
 
 const Navbar = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -43,8 +43,8 @@ const Navbar = () => {
                         as={'nav'}
                         spacing={4}
                         display={{ base: 'none', md: 'flex' }}>
-                        <NavLink key={"my-surveys"}>My surveys</NavLink>
-                        <NavLink key={"explore-surveys"}>Explore Surveys</NavLink>
+                        <NavLink to="my-surveys">My surveys</NavLink>
+                        <NavLink to="explore">Explore Surveys</NavLink>
                     </HStack>
                 </HStack>
                 <Flex alignItems={'center'}>
@@ -52,7 +52,7 @@ const Navbar = () => {
                         {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
                     </Button>
                     {email ? null : <Button colorScheme='teal' variant='solid' size={'sm'} mr={4}>
-                        Login
+                        <RouterLink to="login">Login</RouterLink>
                     </Button>}
                     {email ? <Menu>
                         <MenuButton
