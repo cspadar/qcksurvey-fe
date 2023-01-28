@@ -19,12 +19,13 @@ import NavLink from './NavLink';
 import Hamburger from './Hamburger';
 import { useContext } from 'react';
 import { IUserContext, UserContext } from '../../context/UserContext';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+    /* Hook */
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { colorMode, toggleColorMode } = useColorMode();
-
+    const navigate = useNavigate();
     const { email, onLogout } = useContext(UserContext) as IUserContext;
 
     return (
@@ -64,7 +65,10 @@ const Navbar = () => {
                             <Avatar size={'sm'} />
                         </MenuButton>
                         <MenuList>
-                            <MenuItem onClick={onLogout}>Logout</MenuItem>
+                            <MenuItem onClick={() => {
+                                onLogout();
+                                navigate("/login");
+                            }}>Logout</MenuItem>
                         </MenuList>
                     </Menu> : null}
                     {email ? <Text ml={2} size={'sm'}> {email} </Text> : null}

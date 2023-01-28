@@ -9,30 +9,49 @@ import {
     Button,
     Heading,
     useColorModeValue,
+    useToast,
 } from '@chakra-ui/react';
 import { useContext, useState } from 'react';
 import AuthService from '../api/auth';
 import { IUserContext, UserContext } from '../context/UserContext';
 import { useNavigate } from "react-router-dom";
+import { useQuery } from 'react-query';
 
 const LoginPage = () => {
+    /* State */
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    /* Hook */
     const { onLogin } = useContext(UserContext) as IUserContext;
     const navigate = useNavigate();
+    const toast = useToast()
 
-    const isSubmitDisabled = email.length <= 0 || password.length <= 0;
-
-    const onSubmit = async () => {
-        try {
-            const loginResponse = await AuthService.signIn(email, password);
-            onLogin(loginResponse.email, loginResponse.access_token);
+    /* API */
+    const { isLoading, refetch } = useQuery("POST_LOGIN", () => AuthService.signIn(email, password), {
+        refetchOnWindowFocus: false,
+        retry: false,
+        enabled: false,
+        onSuccess: (data) => {
+            onLogin(data.email, data.access_token);
+            toast({
+                title: 'Login successful',
+                description: `Welcome ${data.email}`,
+                status: 'success',
+            });
             navigate("/");
-        } catch (error) {
-            console.log("TODO")
+        },
+        onError: (err: any) => {
+            toast({
+                title: 'Error - Login unsuccessful',
+                description: err.response.data.message.toString(),
+                status: 'error',
+            });
         }
-    }
+    });
+
+    /* Computed */
+    const isSubmitDisabled = email.length <= 0 || password.length <= 0;
 
     return (
         <Flex
@@ -58,8 +77,9 @@ const LoginPage = () => {
                         <Stack spacing={10}>
                             <Link color={'blue.400'}>Forgot password?</Link>
                             <Button
-                                disabled={isSubmitDisabled}
-                                onClick={onSubmit}
+                                disabled={isSubmitDisabled || isLoading}
+                                isLoading={isLoading}
+                                onClick={() => refetch()}
                                 bg={'blue.400'}
                                 color={'white'}
                                 _hover={{
