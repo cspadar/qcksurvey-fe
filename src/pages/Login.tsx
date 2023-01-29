@@ -11,11 +11,12 @@ import {
     useColorModeValue,
     useToast,
 } from '@chakra-ui/react';
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import AuthService from '../api/auth';
 import { IUserContext, UserContext } from '../context/UserContext';
 import { useNavigate } from "react-router-dom";
 import { useQuery } from 'react-query';
+import { isValidEmail } from '../utils/helper';
 
 const LoginPage = () => {
     /* State */
@@ -51,7 +52,8 @@ const LoginPage = () => {
     });
 
     /* Computed */
-    const isSubmitDisabled = email.length <= 0 || password.length <= 0;
+    const isValidMail = useMemo(() => isValidEmail(email), [email]);
+    const isSubmitDisabled = !isValidMail || password.length <= 0;
 
     return (
         <Flex
@@ -77,7 +79,7 @@ const LoginPage = () => {
                         <Stack spacing={10}>
                             <Link color={'blue.400'}>Forgot password?</Link>
                             <Button
-                                disabled={isSubmitDisabled || isLoading}
+                                isDisabled={isSubmitDisabled || isLoading}
                                 isLoading={isLoading}
                                 onClick={() => refetch()}
                                 bg={'blue.400'}

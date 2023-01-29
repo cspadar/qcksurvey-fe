@@ -7,6 +7,7 @@ import { Route, Routes } from "react-router-dom"
 import LoginPage from './pages/Login';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import MySurveysPage from './pages/MySurveys';
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<></>} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/my-surveys" element={<MySurveysPage />} />
           </Routes>
         </UserContextProvider>
         <ReactQueryDevtools initialIsOpen={false} />
