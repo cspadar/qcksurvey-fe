@@ -44,8 +44,8 @@ const Navbar = () => {
                         as={'nav'}
                         spacing={4}
                         display={{ base: 'none', md: 'flex' }}>
-                        <NavLink to="my-surveys">My surveys</NavLink>
-                        <NavLink to="explore">Explore Surveys</NavLink>
+                        <NavLink to="/survey">My surveys</NavLink>
+                        <NavLink to="/survey/all">Explore Surveys</NavLink>
                     </HStack>
                 </HStack>
                 <Flex alignItems={'center'}>

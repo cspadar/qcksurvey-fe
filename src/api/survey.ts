@@ -14,8 +14,14 @@ const findAllMine = async () => {
     return response.data;
 }
 
+const getSurvey = async (id: string) => {
+    const response = await axiosClient.get<ISurvey>(`/survey/${id}`);
+    return response.data;
+}
+
 const SurveyService = {
-    findAllMine
+    findAllMine,
+    getSurvey
 }
 
 export default SurveyService;

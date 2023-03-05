@@ -3,11 +3,12 @@ import { ChakraProvider } from '@chakra-ui/react';
 import Navbar from './components/navbar/Navbar';
 import theme from './config/chakra';
 import { UserContextProvider } from './context/UserContext';
-import { Route, Routes } from "react-router-dom"
+import { Route, Router, Routes } from "react-router-dom"
 import LoginPage from './pages/Login';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import MySurveysPage from './pages/MySurveys';
+import SurveyEdit from './pages/SurveyEdit';
 
 const queryClient = new QueryClient();
 
@@ -19,8 +20,12 @@ export default function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<></>} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/my-surveys" element={<MySurveysPage />} />
+            <Route path="login" element={<LoginPage />} />
+
+            <Route path="survey" element={<MySurveysPage />} />
+            <Route path="survey/edit" element={<SurveyEdit />} />
+            <Route path="survey/edit/:id" element={<SurveyEdit />} />
+
           </Routes>
         </UserContextProvider>
         <ReactQueryDevtools initialIsOpen={false} />

@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 import SurveyService from '../api/survey';
 
 type Status = "DRAFT" | "PUBLIC" | "PRIVATE" | "CLOSED";
@@ -35,7 +36,8 @@ const MySurveysPage = () => {
         "DRAFT", "CLOSED", "PRIVATE", "PUBLIC"
     ]);
     /* Hook */
-    const toast = useToast()
+    const toast = useToast();
+    const navigate = useNavigate();
 
     /* API */
     const { data, isLoading } = useQuery("GET_MY_SURVEYS", SurveyService.findAllMine, {
@@ -67,6 +69,11 @@ const MySurveysPage = () => {
         return lowSurvey.includes(lowTerm) && selectedStatuses.includes(s.status as Status);
     });
 
+    /* Event handlers */
+    const onEdit = (surveyId: string) => {
+        navigate(`/survey/edit/${surveyId}`);
+    }
+
     if (isLoading) return (<Spinner size={'lg'} m={3} />)
 
     return (
@@ -83,6 +90,7 @@ const MySurveysPage = () => {
                     <Stack spacing={[1, 5]} direction={['column', 'row']}>
                         {StatusConfig.map(sc => {
                             return <Checkbox
+                                key={sc.status}
                                 onChange={onChangeFilterStatus}
                                 value={sc.status}
                                 colorScheme={sc.color}>
@@ -105,7 +113,7 @@ const MySurveysPage = () => {
                             <Flex justifyContent={'space-between'}>
                                 <Heading size='md'>{survey.title}</Heading>
                                 <Box>
-                                    <EditIcon marginX={1} color={"grey"} />
+                                    <EditIcon marginX={1} color={"grey"} onClick={() => onEdit(survey.id)} />
                                     <DeleteIcon marginX={1} color={"grey"} />
                                 </Box>
                             </Flex>
