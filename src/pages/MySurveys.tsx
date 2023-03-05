@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import SurveyService from '../api/survey';
 import { SurveyStatus } from '../interface/survey';
 import { STATUS_CONFIG } from '../utils/constants';
+import { getToastOptionError } from '../utils/helper';
 
 const MySurveysPage = () => {
     /* State */
@@ -35,26 +36,16 @@ const MySurveysPage = () => {
 
     /* API */
     const { data, isLoading } = useQuery("GET_MY_SURVEYS", SurveyService.findAllMine, {
-        onError: (err: any) => {
-            toast({
-                title: 'Error',
-                description: err.response.data.message.toString(),
-                status: 'error',
-            });
-        }
+        onError: (err: any) => toast(getToastOptionError(err))
     });
 
-    const { mutate: deletePost } = useMutation((id: string) => SurveyService.deleteSurvey(id), {
+    const { mutate: deletePost } = useMutation((id: string) => SurveyService.deleteSurvey(id + "asds"), {
         onSuccess() {
             toast({ title: 'Survey deleted', status: 'success' });
             queryClient.invalidateQueries("GET_MY_SURVEYS");
         },
         onError(err: any) {
-            toast({
-                title: 'Error',
-                description: err.response.data.message.toString(),
-                status: 'error',
-            });
+            toast(getToastOptionError(err))
         }
     });
 

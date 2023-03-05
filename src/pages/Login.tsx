@@ -16,7 +16,7 @@ import AuthService from '../api/auth';
 import { IUserContext, UserContext } from '../context/UserContext';
 import { useNavigate } from "react-router-dom";
 import { useQuery } from 'react-query';
-import { isValidEmail } from '../utils/helper';
+import { getToastOptionError, isValidEmail } from '../utils/helper';
 
 const LoginPage = () => {
     /* State */
@@ -42,13 +42,7 @@ const LoginPage = () => {
             });
             navigate("/");
         },
-        onError: (err: any) => {
-            toast({
-                title: 'Error - Login unsuccessful',
-                description: err.response.data.message.toString(),
-                status: 'error',
-            });
-        }
+        onError: (err: any) => toast(getToastOptionError(err))
     });
 
     /* Computed */

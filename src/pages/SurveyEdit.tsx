@@ -10,6 +10,7 @@ import {
     RadioGroup,
     Stack,
     Radio,
+    UseToastOptions,
 } from '@chakra-ui/react';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -17,6 +18,7 @@ import SurveyService from '../api/survey';
 import { SurveyStatus } from '../interface/survey';
 import { useEditorState } from '../store/editorStore';
 import { STATUS_CONFIG } from '../utils/constants';
+import { getToastOptionError } from '../utils/helper';
 
 const SurveyEdit = () => {
     /* Hook */
@@ -39,13 +41,7 @@ const SurveyEdit = () => {
             setTitle(data.title);
             setStatus(data.status as SurveyStatus);
         },
-        onError: (err: any) => {
-            toast({
-                title: 'Error',
-                description: err.response.data.message.toString(),
-                status: 'error',
-            });
-        }
+        onError: (error) => toast(getToastOptionError(error))
     });
 
     if (isLoading) return (<Spinner size={'lg'} m={3} />)
