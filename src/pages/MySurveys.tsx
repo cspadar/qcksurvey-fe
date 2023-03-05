@@ -18,6 +18,7 @@ import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import SurveyService from '../api/survey';
+import AlertDialog from '../components/navbar/AlertDialog';
 import { SurveyStatus } from '../interface/survey';
 import { STATUS_CONFIG } from '../utils/constants';
 import { getToastOptionError } from '../utils/helper';
@@ -28,6 +29,7 @@ const MySurveysPage = () => {
     const [selectedStatuses, setSelectedStatuses] = useState<SurveyStatus[]>([
         "DRAFT", "CLOSED", "PRIVATE", "PUBLIC"
     ]);
+    const [toDeleteId, setToDeleteId] = useState<string | null>(null);
 
     /* Hook */
     const toast = useToast();
@@ -46,6 +48,9 @@ const MySurveysPage = () => {
         },
         onError(err: any) {
             toast(getToastOptionError(err))
+        },
+        onSettled() {
+            setToDeleteId(null);
         }
     });
 
@@ -68,20 +73,25 @@ const MySurveysPage = () => {
         return lowSurvey.includes(lowTerm) && selectedStatuses.includes(s.status as SurveyStatus);
     });
 
+    const toDeleteTitle = data?.find(d => d.id === toDeleteId)?.title;
+
     /* Event handlers */
     const onEdit = (surveyId: string) => {
         navigate(`/survey/edit/${surveyId}`);
-    }
-
-    const onDelete = (surveyId: string) => {
-        // TODO: Confirmation dialog...
-        deletePost(surveyId);
     }
 
     if (isLoading) return (<Spinner size={'lg'} m={3} />)
 
     return (
         <>
+            <AlertDialog
+                isOpen={!!toDeleteId}
+                onClose={() => setToDeleteId(null)}
+                onSubmit={() => deletePost(toDeleteId!)}
+                header={`${toDeleteTitle} - Delete`}
+                body={"Are you sure? You can't undo this action afterwards."}
+                confirmText={"Delete"}
+            />
             <Flex margin={2} gap={4} justifyContent={"space-between"} wrap={"wrap"}>
                 <Input
                     minW={200}
@@ -109,7 +119,8 @@ const MySurveysPage = () => {
                 wrap={'wrap'}
                 gap={2}
                 marginTop={2}
-                bg={useColorModeValue('gray.50', 'gray.800')}>
+                bg={useColorModeValue('gray.50', 'gray.800')}
+            >
                 {filteredSurveys ? filteredSurveys.map(survey => {
                     const statusColor = STATUS_CONFIG.find(sc => sc.status === survey.status);
                     return <Card minW={'xs'} maxW='xs' key={survey.id}>
@@ -118,7 +129,7 @@ const MySurveysPage = () => {
                                 <Heading size='md'>{survey.title}</Heading>
                                 <Box>
                                     <EditIcon marginX={1} color={"grey"} cursor={"pointer"} onClick={() => onEdit(survey.id)} />
-                                    <DeleteIcon marginX={1} color={"grey"} cursor={"pointer"} onClick={() => onDelete(survey.id)} />
+                                    <DeleteIcon marginX={1} color={"grey"} cursor={"pointer"} onClick={() => setToDeleteId(survey.id)} />
                                 </Box>
                             </Flex>
                             <Badge colorScheme={statusColor?.color}>
