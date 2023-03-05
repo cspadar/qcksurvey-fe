@@ -19,9 +19,15 @@ const getSurvey = async (id: string) => {
     return response.data;
 }
 
+const deleteSurvey = async (id: string) => {
+    const response = await axiosClient.delete<ISurvey>(`/survey/${id}`);
+    return response.data;
+}
+
 const SurveyService = {
     findAllMine,
-    getSurvey
+    getSurvey,
+    deleteSurvey
 }
 
 export default SurveyService;
