@@ -39,7 +39,7 @@ const MySurveysPage = () => {
         onError: (err: any) => toast(getToastOptionError(err))
     });
 
-    const { mutate: deletePost } = useMutation((id: string) => SurveyService.deleteSurvey(id + "asds"), {
+    const { mutate: deletePost } = useMutation((id: string) => SurveyService.deleteSurvey(id), {
         onSuccess() {
             toast({ title: 'Survey deleted', status: 'success' });
             queryClient.invalidateQueries("GET_MY_SURVEYS");
