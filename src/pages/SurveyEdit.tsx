@@ -10,7 +10,14 @@ import {
     RadioGroup,
     Stack,
     Radio,
-    UseToastOptions,
+    Button,
+    Checkbox,
+    Accordion,
+    AccordionItem,
+    AccordionButton,
+    AccordionPanel,
+    AccordionIcon,
+    Select,
 } from '@chakra-ui/react';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -33,6 +40,9 @@ const SurveyEdit = () => {
     /* Store setters */
     const setTitle = useEditorState(state => state.setTitle);
     const setStatus = useEditorState(state => state.setStatus);
+    const addQuestion = useEditorState(state => state.addQuestion);
+    const deleteQuestion = useEditorState(state => state.deleteQuestion);
+    const updateQuestion = useEditorState(state => state.updateQuestion);
 
     /* API */
     const { data, isLoading } = useQuery("GET_SURVEY", () => SurveyService.getSurvey(id!), {
@@ -72,7 +82,47 @@ const SurveyEdit = () => {
                 </FormControl>
                 <FormControl isRequired m={4}>
                     <FormLabel>Questions</FormLabel>
+                    <Accordion>
+                        {questions.map((q, index: number) => {
+                            return <AccordionItem key={q.id}>
+                                <h2>
+                                    <AccordionButton>
+                                        <Box as="span" flex='1' textAlign='left'>
+                                            {`${index + 1}. question`}
+                                        </Box>
+                                        <AccordionIcon />
+                                    </AccordionButton>
+                                </h2>
+                                <AccordionPanel pb={4}>
+                                    <Flex>
+                                        <Box flex="1" m="2">
+                                            <FormLabel>Title</FormLabel>
+                                            <Input type="text" value={q.title} onChange={(e) => updateQuestion(q.id, "title", e.target.value)} />
+                                        </Box>
+                                        <Box flex="1" m="2">
+                                            <FormLabel>Type</FormLabel>
+                                            <Select value={q.type} onChange={(e) => updateQuestion(q.id, "type", e.target.value)}>
+                                                <option value='TEXT'>Text</option>
+                                                <option value='SCALE'>Scale</option>
+                                                <option value='MULTIPLE_CHOICE'>Multiple choice</option>
+                                                <option value='SINGLE_CHOICE'>Single choice</option>
+                                            </Select>
+                                        </Box>
+                                    </Flex>
+                                    <Checkbox checked={q.optional} onChange={(e) => updateQuestion(q.id, "optional", e.target.checked)}>Optional</Checkbox>
+                                    <Box>
+                                        <Button colorScheme='red' onClick={() => deleteQuestion(q.id)} ml={3}>
+                                            remove question
+                                        </Button>
+                                    </Box>
+                                </AccordionPanel>
+                            </AccordionItem>
+                        })}
+                    </Accordion>
                 </FormControl>
+                <Button colorScheme='green' onClick={() => addQuestion()} ml={3}>
+                    add question
+                </Button>
             </Box>
             <Box m={2} flex="1">
                 <Heading as='h2' size='md' m={2} textAlign={'center'}>Preview</Heading>
