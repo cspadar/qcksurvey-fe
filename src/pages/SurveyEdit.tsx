@@ -1,3 +1,4 @@
+import { ArrowDownIcon, ArrowUpIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
     Flex,
     useToast,
@@ -18,11 +19,12 @@ import {
     AccordionPanel,
     AccordionIcon,
     Select,
+    IconButton,
 } from '@chakra-ui/react';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import SurveyService from '../api/survey';
-import { SurveyStatus } from '../interface/survey';
+import { QuestionType, SurveyStatus } from '../interface/survey';
 import { useEditorState } from '../store/editorStore';
 import { STATUS_CONFIG } from '../utils/constants';
 import { getToastOptionError } from '../utils/helper';
@@ -43,6 +45,12 @@ const SurveyEdit = () => {
     const addQuestion = useEditorState(state => state.addQuestion);
     const deleteQuestion = useEditorState(state => state.deleteQuestion);
     const updateQuestion = useEditorState(state => state.updateQuestion);
+    const changeQuestionType = useEditorState(state => state.changeQuestionType);
+    const setQuestions = useEditorState(state => state.setQuestions);
+
+    const upsertAnswer = useEditorState(state => state.upsertAnswer);
+    const deleteAnswer = useEditorState(state => state.deleteAnswer);
+
 
     /* API */
     const { data, isLoading } = useQuery("GET_SURVEY", () => SurveyService.getSurvey(id!), {
@@ -50,6 +58,7 @@ const SurveyEdit = () => {
         onSuccess: (data) => {
             setTitle(data.title);
             setStatus(data.status as SurveyStatus);
+            setQuestions(data.questions);
         },
         onError: (error) => toast(getToastOptionError(error))
     });
@@ -95,22 +104,37 @@ const SurveyEdit = () => {
                                 </h2>
                                 <AccordionPanel pb={4}>
                                     <Flex>
-                                        <Box flex="1" m="2">
+                                        <Box flex="2" m="2">
                                             <FormLabel>Title</FormLabel>
                                             <Input type="text" value={q.title} onChange={(e) => updateQuestion(q.id, "title", e.target.value)} />
                                         </Box>
                                         <Box flex="1" m="2">
                                             <FormLabel>Type</FormLabel>
-                                            <Select value={q.type} onChange={(e) => updateQuestion(q.id, "type", e.target.value)}>
-                                                <option value='TEXT'>Text</option>
+                                            <Select value={q.type} onChange={(e) => changeQuestionType(q.id, e.target.value as QuestionType)}>
+                                                {/* <option value='TEXT'>Text</option> */}
                                                 <option value='SCALE'>Scale</option>
                                                 <option value='MULTIPLE_CHOICE'>Multiple choice</option>
                                                 <option value='SINGLE_CHOICE'>Single choice</option>
                                             </Select>
                                         </Box>
+                                        <Box flex="1" m="2">
+                                            <FormLabel>Optional</FormLabel>
+                                            <Checkbox checked={q.optional} onChange={(e) => updateQuestion(q.id, "optional", e.target.checked)}>Optional</Checkbox>
+                                        </Box>
                                     </Flex>
-                                    <Checkbox checked={q.optional} onChange={(e) => updateQuestion(q.id, "optional", e.target.checked)}>Optional</Checkbox>
-                                    <Box>
+                                    <Heading as='h3' size='sm' m={2}>Answers</Heading>
+                                    <Flex wrap={'wrap'} gap={2}>
+                                        {q.answer_options.map(a => <Flex key={a.id} m="2">
+                                            <Input mr={2} type="text" value={a.title} onChange={(e) => upsertAnswer(q.id, e.target.value, a.id)} />
+                                            <IconButton isDisabled={q.type === "SCALE"} aria-label='Move answer up' colorScheme='blue' icon={<ArrowDownIcon />} ml={2} />
+                                            <IconButton isDisabled={q.type === "SCALE"} aria-label='Move answer down' colorScheme='blue' icon={<ArrowUpIcon />} ml={2} />
+                                            <IconButton isDisabled={q.type === "SCALE"} aria-label='Delete answer' colorScheme='red' icon={<DeleteIcon />} onClick={() => deleteAnswer(q.id, a.id)} ml={2} />
+                                        </Flex>)}
+                                    </Flex>
+                                    <Button colorScheme='green' onClick={() => upsertAnswer(q.id, "")} ml={3}>
+                                        add new answer
+                                    </Button>
+                                    <Box mt={4}>
                                         <Button colorScheme='red' onClick={() => deleteQuestion(q.id)} ml={3}>
                                             remove question
                                         </Button>

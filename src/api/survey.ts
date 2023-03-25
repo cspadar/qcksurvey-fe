@@ -1,3 +1,4 @@
+import { IQuestion } from '../interface/survey';
 import axiosClient from '../utils/axiosClient';
 
 interface ISurvey {
@@ -7,6 +8,7 @@ interface ISurvey {
     title: string;
     status: string;
     createdBy: string;
+    questions: IQuestion[];
 }
 
 const findAllMine = async () => {

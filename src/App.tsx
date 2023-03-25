@@ -28,7 +28,6 @@ export default function App() {
 
           </Routes>
         </UserContextProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </ChakraProvider>
   )
